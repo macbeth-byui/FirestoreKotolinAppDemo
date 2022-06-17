@@ -29,6 +29,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // Initialize firebase
+        // Requires google-services.json in the app folder
+        // Requires gms classpath in project gradle file
+        // Requires gms plugin and firestore libraries in module gradle file
+        // See https://firebase.google.com/docs/firestore/quickstart for more details
         FirebaseApp.initializeApp(this)
         db = Firebase.firestore
 
@@ -42,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         val bAdd = findViewById<Button>(R.id.bAdd)
         bAdd.setOnClickListener { addUser() }
 
+        // Connect the listview to the "users" list (not yet populated)
         lvUsersAdapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, users)
         lvUsers.adapter = lvUsersAdapter
 
@@ -49,11 +55,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addUser() {
+        // To add to database, create a User object first
         val user = User(
             etName.text.toString(),
             etAge.text.toString().toInt(),
             etTitle.text.toString())
 
+        // Need to specify the document name.  The fields for the document
+        // will all ome from the User object we just created.
         db.collection("users").document(etUserName.text.toString())
             .set(user)
             .addOnSuccessListener { Log.d("FirestoreKotlinAppDemo", "New user sent to firestore: $user") }
